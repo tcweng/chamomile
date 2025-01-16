@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  userId String @id @default(uuid())
+  name   String
+  email  String
+}
+
+model Collections {
+  collectionId Int        @id @default(autoincrement())
+  name         String
+  products     Products[]
+}
+
+model Products {
+  productId     Int         @id @default(autoincrement())
+  name          String
+  sku           String
+  productImage  String?
+  price         Float
+  stockQuantity Int
+  sales         Sales[]
+  collectionId  Int
+  collection    Collections @relation(fields: [collectionId], references: [collectionId])
+}
+
+model SalesReceipt {
+  receiptId Int      @id @default(autoincrement())
+  timestamp DateTime @default(now())
+  total     Float
+  remark    String?
+  sales     Sales[]
+}
+
+model Sales {
+  saleId      Int          @id @default(autoincrement())
+  productId   Int
+  receiptId   Int
+  timestamp   DateTime     @default(now())
+  quantity    Int
+  unitPrice   Float
+  totalAmount Float
+  remark      String?
+  product     Products     @relation(fields: [productId], references: [productId])
+  receipt     SalesReceipt @relation(fields: [receiptId], references: [receiptId])
+}
+
+model ExpenseCategory {
+  expenseCategoryId Int        @id @default(autoincrement())
+  name              String
+  expenses          Expenses[]
+}
+
+model Expenses {
+  expensesId        Int             @id @default(autoincrement())
+  name              String
+  cost              Float
+  timestamp         DateTime        @default(now())
+  quantity          Int
+  unitPrice         Float
+  totalAmount       Float
+  remark            String?
+  expenseCategoryId Int
+  ExpenseCategory   ExpenseCategory @relation(fields: [expenseCategoryId], references: [expenseCategoryId])
+}
