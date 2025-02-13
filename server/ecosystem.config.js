@@ -1,7 +1,7 @@
-module.export = {
+module.exports = {
   apps: [
     {
-      name: "chamomile_inventory",
+      name: "chamomile",
       script: "npm",
       args: "run dev",
       env: {

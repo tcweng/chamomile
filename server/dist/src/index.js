@@ -32,7 +32,7 @@ app.use("/products", productRoutes_1.default); // http://localhost:8000/products
 app.use("/sales", salesRoutes_1.default); // http://localhost:8000/sales
 app.use("/collections", collectionRoutes_1.default); //http://localhost:8000/collections
 // SERVER
-const port = process.env.PORT || 3001;
-app.listen(port, () => {
+const port = Number(process.env.PORT) || 3001;
+app.listen(port, "0.0.0.0", () => {
     console.log(`Server running on ${port}`);
 });
