@@ -31,6 +31,6 @@ app.use("/collections", collectionRoutes); //http://localhost:8000/collections
 
 // SERVER
 const port = Number(process.env.PORT) || 3001;
-app.listen(port, "0,0,0,0", () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server running on ${port}`);
 });
