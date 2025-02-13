@@ -5,4 +5,6 @@ const collectionController_1 = require("../controllers/collectionController");
 const router = (0, express_1.Router)();
 router.get("/", collectionController_1.getCollections);
 router.post("/", collectionController_1.createCollection);
+router.put("/:id", collectionController_1.updateCollection);
+router.delete("/:id", collectionController_1.deleteCollection);
 exports.default = router;

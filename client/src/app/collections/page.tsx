@@ -2,32 +2,20 @@
 
 import {
   useCreateCollectionMutation,
+  useDeleteCollectionMutation,
+  useEditCollectionMutation,
   useGetCollectionQuery,
 } from "@/state/api";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import Header from "../(components)/Header";
 import { create } from "domain";
+import { Pencil, Trash2 } from "lucide-react";
+import EditCollectionModal from "./EditCollectionModal";
 
 type CollectionFormData = {
   name: string;
 };
-
-const columns: GridColDef[] = [
-  {
-    field: "collectionId",
-    headerName: "ID",
-    width: 50,
-    valueGetter: (value, row) => row.collectionId,
-  },
-  {
-    field: "name",
-    headerName: "Name",
-    width: 200,
-    type: "string",
-    valueGetter: (value, row) => row.name,
-  },
-];
 
 const labelCssStyles = "block text-sm font-medium text-gray-700";
 const inputCssStyles =
@@ -36,16 +24,88 @@ const inputCssStyles =
 const Collections = () => {
   const { data: collections, isError, isLoading } = useGetCollectionQuery();
   const [collectionData, setCollectionData] = useState({ name: "" });
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCollection, setSelectedCollection] =
+    useState<CollectionFormData | null>();
+  const [selectedCollectionId, setSelectedCollectionId] = useState<
+    number | null
+  >(null);
+  const [createCollection] = useCreateCollectionMutation();
+  const [deleteCollection] = useDeleteCollectionMutation();
+  const [editCollection] = useEditCollectionMutation();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setCollectionData({ name: e.target.value });
   };
 
-  const [createCollection] = useCreateCollectionMutation();
-
   const handleSubmit = async (collectionData: CollectionFormData) => {
     await createCollection(collectionData);
   };
+
+  const handleEditProduct = async (
+    collectionId: number,
+    updatedData: CollectionFormData
+  ) => {
+    await editCollection({ collectionId, updatedData });
+  };
+
+  const handleDelete = async (collectionId: number) => {
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this collection?"
+    );
+    if (!confirmDelete) return;
+
+    try {
+      await deleteCollection(collectionId); // Trigger the delete mutation
+      alert("Collection deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete the collection:", error);
+      alert("Failed to delete the collection.");
+    }
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: "collectionId",
+      headerName: "ID",
+      width: 50,
+      valueGetter: (value, row) => row.collectionId,
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      width: 200,
+      type: "string",
+      valueGetter: (value, row) => row.name,
+    },
+    {
+      field: "actions",
+      headerName: "Delete",
+      width: 100,
+      renderCell: (params) => (
+        <button onClick={() => handleDelete(params.row.collectionId)}>
+          <Trash2 className="w-5 h-5"></Trash2>
+        </button>
+      ),
+    },
+    {
+      field: "editAction",
+      headerName: "Edit",
+      width: 100,
+      renderCell: (params) => (
+        <button
+          onClick={() => {
+            console.log(params);
+            setSelectedCollection(params.row);
+            setSelectedCollectionId(params.row.collectionId);
+            setIsEditModalOpen(true);
+          }}
+        >
+          <Pencil className="w-5 h-5"></Pencil>
+        </button>
+      ),
+    },
+  ];
 
   if (isLoading) {
     return <div className="py-4">Loading...</div>;
@@ -91,10 +151,16 @@ const Collections = () => {
           rows={collections}
           columns={columns}
           getRowId={(row) => row.collectionId}
-          checkboxSelection
           className="bg-white shadow rounded-lg border border-gray-200 mt-5 !text-gray-700"
         ></DataGrid>
       </div>
+      <EditCollectionModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        collection={selectedCollection ?? null}
+        collectionId={selectedCollectionId}
+        onEdit={handleEditProduct}
+      ></EditCollectionModal>
     </div>
   );
 };

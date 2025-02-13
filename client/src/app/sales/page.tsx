@@ -22,15 +22,15 @@ const Sales = () => {
       <TabContext value={value}>
         {/* MENU */}
         <TabList onChange={handleChange}>
-          <Tab label="Sales" value="1"></Tab>
+          <Tab label="Receipts" value="1"></Tab>
           <Tab label="Transactions" value="2"></Tab>
         </TabList>
         {/* CONTENT */}
         <TabPanel value="1" className="!p-0">
-          <Transactions />
+          <Receipts />
         </TabPanel>
         <TabPanel value="2" className="!p-0">
-          <Receipts />
+          <Transactions />
         </TabPanel>
       </TabContext>
     </div>
