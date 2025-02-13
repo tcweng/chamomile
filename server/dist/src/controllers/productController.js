@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProduct = exports.createProduct = exports.getProducts = void 0;
+exports.deleteProduct = exports.updateProduct = exports.createProduct = exports.getProducts = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 /*
@@ -21,8 +21,14 @@ const getProducts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     var _a;
     try {
         const search = (_a = req.query.search) === null || _a === void 0 ? void 0 : _a.toString();
+        const collectionQuery = req.query.collectionQuery
+            ? parseInt(req.query.collectionQuery, 10)
+            : undefined;
         const products = yield prisma.products.findMany({
-            where: { name: { contains: search } },
+            where: {
+                name: { contains: search },
+                collectionId: { equals: collectionQuery },
+            },
             orderBy: { name: "asc" },
         });
         res.json(products);
@@ -56,6 +62,25 @@ const createProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.createProduct = createProduct;
+// To update a product, get the unqiue ID of the product that we interact with
+const updateProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const productId = parseInt(id);
+        const { name, sku, productImage, price, stockQuantity, collectionId } = 
+        // Getting the data from the frontend
+        req.body;
+        const updatedProduct = yield prisma.products.update({
+            where: { productId },
+            data: Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (name && { name })), (sku && { sku })), (productImage && { productImage })), (price !== undefined && { price })), (stockQuantity !== undefined && { stockQuantity })), (collectionId !== undefined && { collectionId })),
+        });
+        res.status(200).json(updatedProduct);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Error updating product", error });
+    }
+});
+exports.updateProduct = updateProduct;
 // To delete a product, we first need to get the unique ID of the product that we interact with.
 const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -73,6 +98,7 @@ const deleteProduct = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).json({ message: "Product deleted successfully" });
     }
     catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Error deleting product" });
     }
 });

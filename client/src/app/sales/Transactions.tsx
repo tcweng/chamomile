@@ -1,6 +1,5 @@
 import { useGetSalesQuery, useGetSalesReceiptsQuery } from "@/state/api";
 import React from "react";
-import Header from "../(components)/Header";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const columns: GridColDef[] = [
@@ -67,7 +66,6 @@ const Transactions = () => {
         rows={sales}
         columns={columns}
         getRowId={(row) => row.saleId}
-        checkboxSelection
         className="bg-white shadow rounded-lg border border-gray-200 mt-5 !text-gray-700"
       ></DataGrid>
     </div>

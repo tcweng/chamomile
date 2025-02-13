@@ -55,12 +55,12 @@ const getReceipt = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.getReceipt = getReceipt;
 const createSalesReceipt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cart, totalAmount, remark } = req.body; // Cart is an array of items
+    const { cart, total, remark } = req.body; // Cart is an array of items
     try {
         // Create SalesReceipt
         const receipt = yield prisma.salesReceipt.create({
             data: {
-                total: totalAmount,
+                total: total,
                 remark,
             },
         });

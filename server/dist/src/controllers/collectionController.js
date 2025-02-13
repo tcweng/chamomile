@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createCollection = exports.getCollections = void 0;
+exports.deleteCollection = exports.updateCollection = exports.createCollection = exports.getCollections = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getCollections = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -46,3 +46,43 @@ const createCollection = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.createCollection = createCollection;
+// To update a collection, get the unqiue ID of the product that we interact with
+const updateCollection = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { id } = req.params;
+        const collectionId = parseInt(id);
+        const { name } = 
+        // Getting the data from the frontend
+        req.body;
+        const updatedCollection = yield prisma.collections.update({
+            where: { collectionId },
+            data: Object.assign({}, (name && { name })),
+        });
+        res.status(200).json(updatedCollection);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Error updating collection", error });
+    }
+});
+exports.updateCollection = updateCollection;
+// To delete a collection, we first need to get the unique ID of the product that we interact with.
+const deleteCollection = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Get the ID from the url parameters
+        const { id } = req.params;
+        const collectionId = parseInt(id); // Ensure the id is an integer
+        // Check if the product exists
+        const collection = yield prisma.collections.findUnique({
+            where: { collectionId },
+        });
+        // Delete the product
+        yield prisma.collections.delete({
+            where: { collectionId },
+        });
+        res.status(201).json({ message: "Collection deleted successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ message: "Error deleting collection" });
+    }
+});
+exports.deleteCollection = deleteCollection;
