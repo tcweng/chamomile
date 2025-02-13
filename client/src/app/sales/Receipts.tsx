@@ -1,39 +1,54 @@
 import { useGetSalesReceiptsQuery } from "@/state/api";
 import React from "react";
-import Header from "../(components)/Header";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
-const columns: GridColDef[] = [
-  {
-    field: "timestamp",
-    headerName: "Date",
-    width: 100,
-    type: "string",
-    valueGetter: (value, row) => row.timestamp.split("T")[0],
-  },
-  {
-    field: "receiptId",
-    headerName: "Receipt No.",
-    width: 100,
-    valueGetter: (value, row) => `#0000${row.receiptId}`,
-  },
-  {
-    field: "total",
-    headerName: "Total ",
-    type: "number",
-    valueGetter: (value, row) => `RM ${row.total.toFixed(2)}`,
-  },
-  {
-    field: "remark",
-    headerName: "Remark ",
-    width: 200,
-    type: "string",
-    valueGetter: (value, row) => row.remark,
-  },
-];
+import { Eye } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const Receipts = () => {
   const { data: receipts, isError, isLoading } = useGetSalesReceiptsQuery();
+  const router = useRouter();
+
+  const columns: GridColDef[] = [
+    {
+      field: "view",
+      headerName: "",
+      width: 50,
+      renderCell: (params) => (
+        <button
+          className="flex w-full justify-center"
+          onClick={() => router.push(`/sales/${params.row.receiptId}`)}
+        >
+          <Eye className="w-4 h-4 text-gray-500"></Eye>
+        </button>
+      ),
+    },
+    {
+      field: "timestamp",
+      headerName: "Date",
+      width: 100,
+      type: "string",
+      valueGetter: (value, row) => row.timestamp.split("T")[0],
+    },
+    {
+      field: "receiptId",
+      headerName: "Receipt No.",
+      width: 100,
+      valueGetter: (value, row) => `#0000${row.receiptId}`,
+    },
+    {
+      field: "total",
+      headerName: "Total ",
+      type: "number",
+      valueGetter: (value, row) => `RM ${row.total.toFixed(2)}`,
+    },
+    {
+      field: "remark",
+      headerName: "Remark ",
+      width: 200,
+      type: "string",
+      valueGetter: (value, row) => row.remark,
+    },
+  ];
 
   if (isLoading) {
     return <div className="py-4">Loading...</div>;
@@ -52,8 +67,9 @@ const Receipts = () => {
       <DataGrid
         rows={receipts}
         columns={columns}
+        rowHeight={48}
+        columnHeaderHeight={48}
         getRowId={(row) => row.receiptId}
-        checkboxSelection
         className="bg-white shadow rounded-lg border border-gray-200 mt-5 !text-gray-700"
       ></DataGrid>
     </div>

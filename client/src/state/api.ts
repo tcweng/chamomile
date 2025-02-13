@@ -1,6 +1,4 @@
-import { buildCreateSlice } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import internal from "stream";
 
 // createApi: A function from Redux Toolkit Query (RTK Query) used to define and manage API slices.
 // It generates hooks for queries and mutations automatically
@@ -14,7 +12,7 @@ export interface Product {
   productImg: string;
   price: number;
   stockQuantity: number;
-  collection: number;
+  collectionId: number;
 }
 
 export interface NewProduct {
@@ -58,8 +56,9 @@ export interface CartItem {
 
 export interface SaleReceipt {
   cart: CartItem[];
-  totalAmount: number;
+  total: number;
   remark?: string;
+  sales?: Sale[];
 }
 
 export interface DashboardMetrics {
@@ -94,12 +93,22 @@ export const api = createApi({
       providesTags: ["DashboardMetrics"],
     }),
 
-    getProducts: build.query<Product[], string | void>({
+    // PRODUCTS
+    getProducts: build.query<
+      Product[],
+      { search?: string; collectionQuery?: number } | void
+    >({
       // (search) is the parameters from query<Type, parameters>, hence it's string or void (nothing).
-      query: (search) => ({
-        url: "/products",
-        params: search ? { search } : {}, // If search is provided, appends it as a query parameter (e.g., ?search=term).
-      }),
+      query: (params) => {
+        const { search, collectionQuery } = params || {};
+        return {
+          url: "/products",
+          params: {
+            ...(search && { search }),
+            ...(collectionQuery !== undefined && { collectionQuery }),
+          },
+        };
+      },
       providesTags: ["Products"],
     }),
 
@@ -113,14 +122,27 @@ export const api = createApi({
       invalidatesTags: ["Products"], // Automatically triggers a re-fetch of the "Products" cache after a successful mutation.
     }),
 
+    editProduct: build.mutation<
+      Product,
+      { productId: string; updatedData: Partial<Product> }
+    >({
+      query: ({ productId, updatedData }) => ({
+        url: `/products/${productId}`,
+        method: "PUT",
+        body: updatedData,
+      }),
+      invalidatesTags: ["Products"],
+    }),
+
     deleteProduct: build.mutation<void, string>({
       query: (productId) => ({
-        url: `/products/${productId}`,
+        url: `/products/${productId.toString()}`,
         method: "DELETE",
       }),
       invalidatesTags: ["Products"],
     }),
 
+    // COLLECTIONS
     getCollection: build.query<Collection[], void>({
       query: () => "/collections",
       providesTags: ["Collections"],
@@ -132,8 +154,30 @@ export const api = createApi({
         method: "POST",
         body: newCollection,
       }),
+      invalidatesTags: ["Collections"],
     }),
 
+    editCollection: build.mutation<
+      Collection,
+      { collectionId: number; updatedData: Partial<Collection> }
+    >({
+      query: ({ collectionId, updatedData }) => ({
+        url: `/collections/${collectionId}`,
+        method: "PUT",
+        body: updatedData,
+      }),
+      invalidatesTags: ["Collections"],
+    }),
+
+    deleteCollection: build.mutation<void, number>({
+      query: (collectionId) => ({
+        url: `/collections/${collectionId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Collections"],
+    }),
+
+    // SALES
     getSales: build.query<Sale[], void>({
       query: () => "/sales",
       providesTags: ["Sales"],
@@ -141,6 +185,11 @@ export const api = createApi({
 
     getSalesReceipts: build.query<SaleReceipt[], void>({
       query: () => "/sales/receipt",
+      providesTags: ["SalesReceipt"],
+    }),
+
+    getSingleSalesReceipts: build.query<SaleReceipt, number>({
+      query: (receiptId) => `/sales/receipt/${receiptId}`,
       providesTags: ["SalesReceipt"],
     }),
 
@@ -153,6 +202,7 @@ export const api = createApi({
       invalidatesTags: ["Sales", "Products"],
     }),
 
+    // USERS
     getUsers: build.query<User[], void>({
       // User[] come from interface above
       query: () => "/users",
@@ -179,11 +229,15 @@ export const {
   useGetDashboardMetricsQuery,
   useGetProductsQuery,
   useCreateProductMutation,
-  useGetUsersQuery,
+  useEditProductMutation,
   useDeleteProductMutation,
   useGetSalesQuery,
   useGetSalesReceiptsQuery,
+  useGetSingleSalesReceiptsQuery,
   useCreateSalesReceiptMutation,
   useGetCollectionQuery,
   useCreateCollectionMutation,
+  useEditCollectionMutation,
+  useDeleteCollectionMutation,
+  useGetUsersQuery,
 } = api;

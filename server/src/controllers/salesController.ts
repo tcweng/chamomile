@@ -52,12 +52,12 @@ export const createSalesReceipt = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { cart, totalAmount, remark } = req.body; // Cart is an array of items
+  const { cart, total, remark } = req.body; // Cart is an array of items
   try {
     // Create SalesReceipt
     const receipt = await prisma.salesReceipt.create({
       data: {
-        total: totalAmount,
+        total: total,
         remark,
       },
     });

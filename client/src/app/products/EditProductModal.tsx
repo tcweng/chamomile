@@ -1,8 +1,8 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
-import { v4 } from "uuid";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import Header from "../(components)/Header";
 import { useGetCollectionQuery } from "@/state/api";
-import { Divider, TextField } from "@mui/material";
+import { Divide, Save } from "lucide-react";
+import { Divider } from "@mui/material";
 
 type ProductFormData = {
   name: string;
@@ -13,50 +13,66 @@ type ProductFormData = {
   collectionId: number;
 };
 
-type CreateProductModalProps = {
+type EditProductModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (formData: ProductFormData) => void;
+  product: ProductFormData | null;
+  productId: string | null;
+  onEdit: (productId: string, updatedData: ProductFormData) => void;
 };
 
-const CreateProductModal = ({
+// Prepopulate the Form with Current Data
+const EditProductModal = ({
   isOpen,
   onClose,
-  onCreate,
-}: CreateProductModalProps) => {
-  // Initial State, meaning the form default value is this.
-  // formData holds the form's input value, each field declare below corresponds to a form input element.
-  const [formData, setFormData] = useState({
-    name: "",
-    sku: "",
-    productImg: "",
-    price: 0,
-    stockQuantity: 0,
-    collectionId: 0,
-  });
-
+  product,
+  productId,
+  onEdit,
+}: EditProductModalProps) => {
   const { data: collections, isLoading, isError } = useGetCollectionQuery();
 
-  // The 'name' here correspond to the name attribute in the form element.
-  // So it's setting the formData state with its name's value.
+  const [formData, setFormData] = useState({
+    name: product?.name || "",
+    sku: product?.sku || "",
+    productImg: product?.productImg || "",
+    price: product?.price || 0,
+    stockQuantity: product?.stockQuantity || 0,
+    collectionId: product?.collectionId || 0,
+  });
+
+  // Update formData when the modal receives a new product
+  useEffect(() => {
+    console.log(product);
+    if (product) {
+      setFormData({
+        name: product.name,
+        sku: product.sku,
+        productImg: product.productImg,
+        price: product.price,
+        stockQuantity: product.stockQuantity,
+        collectionId: product.collectionId,
+      });
+    }
+  }, [product]);
+
   const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]:
         name === "price" || name === "stockQuantity" || name === "collectionId"
-          ? value === ""
-            ? ""
-            : parseFloat(value)
+          ? parseFloat(value)
           : value,
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onCreate(formData);
+    if (product) {
+      if (productId) onEdit(productId, formData); // Pass updated data to the parent
+    }
     onClose();
   };
 
@@ -69,7 +85,7 @@ const CreateProductModal = ({
   return (
     <div className="fixed inset-0 bg-gray-500 backdrop-blur-md bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center">
       <div className="relative mx-auto py-6 px-7 w-1/4 shadow-lg rounded-lg bg-white">
-        <Header name="Create New Product"></Header>
+        <Header name="Edit Product"></Header>
         <Divider className="py-2"></Divider>
         <form onSubmit={handleSubmit} className="mt-5">
           {/* PRODUCT NAME */}
@@ -79,10 +95,11 @@ const CreateProductModal = ({
           <input
             type="text"
             name="name"
-            onChange={handleChange}
+            placeholder="Name"
             value={formData.name}
             className={inputCssStyles}
             required
+            onChange={handleChange}
           ></input>
 
           {/* SKU */}
@@ -92,10 +109,11 @@ const CreateProductModal = ({
           <input
             type="text"
             name="sku"
-            onChange={handleChange}
+            placeholder="SKU"
             value={formData.sku}
             className={inputCssStyles}
             required
+            onChange={handleChange}
           ></input>
 
           {/* COLLECTION */}
@@ -106,8 +124,8 @@ const CreateProductModal = ({
             className={inputCssStyles}
             name="collectionId"
             required
-            onChange={handleChange}
             value={formData.collectionId}
+            onChange={handleChange}
           >
             {isLoading ? (
               <div>Loading</div>
@@ -131,10 +149,11 @@ const CreateProductModal = ({
           <input
             type="number"
             name="price"
-            onChange={handleChange}
+            placeholder="Price"
             value={formData.price}
             className={inputCssStyles}
             required
+            onChange={handleChange}
           ></input>
 
           {/* STOCK QUANTITY */}
@@ -144,10 +163,11 @@ const CreateProductModal = ({
           <input
             type="number"
             name="stockQuantity"
-            onChange={handleChange}
+            placeholder="Stock Quantity"
             value={formData.stockQuantity}
             className={inputCssStyles}
             required
+            onChange={handleChange}
           ></input>
 
           {/* CREATE ACTIONS */}
@@ -155,7 +175,7 @@ const CreateProductModal = ({
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-all"
           >
-            Create
+            <Save className="inline w-4 h-4 mr-1 -mt-1"></Save> Save
           </button>
           <button
             onClick={onClose}
@@ -170,4 +190,4 @@ const CreateProductModal = ({
   );
 };
 
-export default CreateProductModal;
+export default EditProductModal;
