@@ -4,21 +4,18 @@ import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { setIsSidebarCollapsed } from "@/state";
 import {
   BookCopy,
-  Inbox,
-  Layout,
   LayoutDashboard,
   LucideIcon,
   Menu,
   Package,
   Receipt,
-  ScanBarcode,
   ScanLine,
-  Tag,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 import ProfilePicture from "@/materials/chamomilezhi.jpg";
+import Image from "next/image";
 
 interface SidebarLinkProps {
   href: string;
@@ -82,7 +79,11 @@ const SideBar = () => {
         }`}
       >
         <div>
-          <img src={ProfilePicture.src} className="rounded-lg w-16"></img>
+          <Image
+            src={ProfilePicture.src}
+            alt="Profile Picture of Chamomile"
+            className="rounded-lg w-16"
+          ></Image>
         </div>
         {/* <h1 className={`${isSidebarCollapsed ? "hidden" : "block" }font-extrabold text-2xl`}>Chamomile</h1> */}
         <button

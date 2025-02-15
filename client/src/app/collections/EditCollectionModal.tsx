@@ -1,6 +1,5 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../(components)/Header";
-import { useGetCollectionQuery } from "@/state/api";
 
 type CollectionFormData = {
   name: string;

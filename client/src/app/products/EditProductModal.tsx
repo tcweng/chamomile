@@ -1,7 +1,7 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../(components)/Header";
 import { useGetCollectionQuery } from "@/state/api";
-import { Divide, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { Divider } from "@mui/material";
 
 type ProductFormData = {
@@ -29,7 +29,7 @@ const EditProductModal = ({
   productId,
   onEdit,
 }: EditProductModalProps) => {
-  const { data: collections, isLoading, isError } = useGetCollectionQuery();
+  const { data: collections, isLoading } = useGetCollectionQuery();
 
   const [formData, setFormData] = useState({
     name: product?.name || "",

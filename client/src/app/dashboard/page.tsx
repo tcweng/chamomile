@@ -1,17 +1,17 @@
 "use client";
 
-import {
-  CheckCircle,
-  Package,
-  Tag,
-  TrendingDown,
-  TrendingUp,
-} from "lucide-react";
-import CardExpenseSummary from "./CardExpenseSummary";
-import CardPopularProduct from "./CardPopularProduct";
-import CardPurchaseSummary from "./CardPurchaseSummary";
-import CardSalesSummary from "./CardSalesSummary";
-import StatCard from "./StatCard";
+// import {
+//   CheckCircle,
+//   Package,
+//   Tag,
+//   TrendingDown,
+//   TrendingUp,
+// } from "lucide-react";
+// import CardExpenseSummary from "./CardExpenseSummary";
+// import CardPopularProduct from "./CardPopularProduct";
+// import CardPurchaseSummary from "./CardPurchaseSummary";
+// import CardSalesSummary from "./CardSalesSummary";
+// import StatCard from "./StatCard";
 
 const Dashboard = () => {
   return (

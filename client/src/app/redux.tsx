@@ -24,6 +24,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 
 /* REDUX PERSISTENCE */
+/* eslint-disable */
 const createNoopStorage = () => {
   return {
     getItem(_key: any) {
@@ -37,6 +38,7 @@ const createNoopStorage = () => {
     },
   };
 };
+/* eslint-enable */
 
 const storage =
   typeof window === "undefined"

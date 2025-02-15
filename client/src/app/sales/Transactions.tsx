@@ -1,4 +1,4 @@
-import { useGetSalesQuery, useGetSalesReceiptsQuery } from "@/state/api";
+import { useGetSalesQuery } from "@/state/api";
 import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 

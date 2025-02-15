@@ -1,8 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { v4 } from "uuid";
 import Header from "../(components)/Header";
 import { useGetCollectionQuery } from "@/state/api";
-import { Divider, TextField } from "@mui/material";
+import { Divider } from "@mui/material";
 
 type ProductFormData = {
   name: string;
@@ -35,7 +34,7 @@ const CreateProductModal = ({
     collectionId: 0,
   });
 
-  const { data: collections, isLoading, isError } = useGetCollectionQuery();
+  const { data: collections, isLoading } = useGetCollectionQuery();
 
   // The 'name' here correspond to the name attribute in the form element.
   // So it's setting the formData state with its name's value.

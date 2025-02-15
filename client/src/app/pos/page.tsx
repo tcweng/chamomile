@@ -17,7 +17,7 @@ import {
   Trash2,
   Wallet,
 } from "lucide-react";
-import { Alert, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 type CartItem = {
   productId: string;
@@ -31,7 +31,7 @@ type CartItem = {
 
 const POS = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [createSalesReceipt, { isSuccess }] = useCreateSalesReceiptMutation();
+  const [createSalesReceipt] = useCreateSalesReceiptMutation();
   const [cartTotal, setCartTotal] = useState(0);
   const [payment, setPayment] = useState<string>("Cash");
   const [editItem, setEditItem] = useState<string | null>();
@@ -42,11 +42,7 @@ const POS = () => {
     isLoading,
     isError,
   } = useGetProductsQuery({ collectionQuery: searchCollection });
-  const {
-    data: collections,
-    isLoading: isCollectionsLoading,
-    isError: isCollectionsError,
-  } = useGetCollectionQuery();
+  const { data: collections } = useGetCollectionQuery();
 
   const handleCollectionChange = (newValue: number) => {
     if (newValue == 0) {
@@ -415,7 +411,7 @@ const POS = () => {
                           {/* FREE GIFT (DISCOUNT ITEM BY 100%) */}
                           <button
                             className="flex items-center p-1 pr-3 bg-blue-600 text-white rounded h-full hover:bg-blue-700 transition-all"
-                            onClick={(e) => {
+                            onClick={() => {
                               applyDiscount(item, 100);
                             }}
                           >

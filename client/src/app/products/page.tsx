@@ -7,14 +7,12 @@ import {
   useGetCollectionQuery,
   useGetProductsQuery,
 } from "@/state/api";
-import { Pencil, Plus, PlusCircleIcon, SearchIcon, Trash2 } from "lucide-react";
+import { Pencil, Plus, SearchIcon, Trash2 } from "lucide-react";
 import { useState } from "react";
 import Header from "../(components)/Header";
 import CreateProductModal from "./CreateProductModal";
 import EditProductModal from "./EditProductModal";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { rowHeightWarning } from "@mui/x-data-grid/hooks/features/rows/gridRowsUtils";
-import { Alert } from "@mui/material";
 
 /*
 // How form data is processed?
