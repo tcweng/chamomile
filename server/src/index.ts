@@ -9,6 +9,7 @@ import dashboardRoutes from "./routes/dashboardRoutes";
 import productRoutes from "./routes/productRoutes";
 import salesRoutes from "./routes/salesRoutes";
 import collectionRoutes from "./routes/collectionRoutes";
+import uploadRoutes from "./routes/uploadRoutes";
 
 // CONFIGURATION
 dotenv.config();
@@ -28,6 +29,7 @@ app.use("/dashboard", dashboardRoutes); // http://localhost:8000/dashboard
 app.use("/products", productRoutes); // http://localhost:8000/products
 app.use("/sales", salesRoutes); // http://localhost:8000/sales
 app.use("/collections", collectionRoutes); //http://localhost:8000/collections
+app.use("/upload", uploadRoutes); //http://localhost:8000/upload
 
 // SERVER
 const port = Number(process.env.PORT) || 3001;

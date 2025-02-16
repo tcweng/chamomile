@@ -5,7 +5,7 @@ import { /*setIsDarkMode,*/ setIsSidebarCollapsed } from "@/state";
 import { Bell, Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import ProfilePicture from "@/materials/chamomilezhi.jpg";
+// import ProfilePicture from "@/materials/chamomilezhi.jpg";
 import Image from "next/image";
 
 const Navbar = () => {
@@ -71,9 +71,11 @@ const Navbar = () => {
           <div className="flex items-center gap-3 cursor-pointer">
             <div className="w-9 h-9">
               <Image
-                src={ProfilePicture.src}
+                src="https://s3-chamomile.s3.ap-southeast-1.amazonaws.com/chamomilezhi.jpg"
                 alt="Chamomile Profile Picture"
                 className="rounded-lg"
+                width="64"
+                height="64"
               ></Image>
             </div>
             <span className="font-semibold">Chamomile</span>

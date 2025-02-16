@@ -13,6 +13,7 @@ import Header from "../(components)/Header";
 import CreateProductModal from "./CreateProductModal";
 import EditProductModal from "./EditProductModal";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import Image from "next/image";
 
 /*
 // How form data is processed?
@@ -28,7 +29,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 type ProductFormData = {
   name: string;
   sku: string;
-  productImg: string;
+  productImage: string;
   price: number;
   stockQuantity: number;
   collectionId: number;
@@ -91,7 +92,18 @@ const Products = () => {
       headerName: "Thumbnail",
       width: 128,
       type: "string",
-      valueGetter: (value, row) => row.productImage,
+      renderCell: (params) =>
+        params.row.productImage != null ? (
+          <Image
+            src={params.row.productImage}
+            alt={`${params.row.productName}'s Image`}
+            width={42}
+            height={42}
+            className="rounded"
+          ></Image>
+        ) : (
+          <div className="w-12 h-12 bg-slate-200 rounded"></div>
+        ),
     },
     {
       field: "name",

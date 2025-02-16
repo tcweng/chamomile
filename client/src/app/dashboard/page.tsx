@@ -1,5 +1,9 @@
 "use client";
 
+import { Package, ScanLine } from "lucide-react";
+import Header from "../(components)/Header";
+import { useRouter } from "next/navigation";
+
 // import {
 //   CheckCircle,
 //   Package,
@@ -13,10 +17,32 @@
 // import CardSalesSummary from "./CardSalesSummary";
 // import StatCard from "./StatCard";
 
+const QuickLinkCSS =
+  "flex flex-col w-32 h-32 justify-center items-center p-4 bg-white gap-2 rounded-md border border-gray hover:bg-slate-50 transition-all";
+
 const Dashboard = () => {
+  const router = useRouter();
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xl:overflow-auto gap-10 pb-4 custom-grid-rows">
-      Under development
+    <div>
+      <Header name="Quick Link" />
+      <div className="flex flex-row gap-2 my-4">
+        <button className={QuickLinkCSS} onClick={() => router.push("/pos")}>
+          <ScanLine></ScanLine>
+          Point of Sales
+        </button>
+
+        <button
+          className={QuickLinkCSS}
+          onClick={() => router.push("/products")}
+        >
+          <Package />
+          Products
+        </button>
+      </div>
+
+      <Header name="Analytics (Coming Soon)" />
+
       {/* <CardPopularProduct/> */}
       {/* <CardSalesSummary /> */}
       {/* <CardPurchaseSummary />

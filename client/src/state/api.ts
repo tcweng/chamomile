@@ -9,7 +9,7 @@ export interface Product {
   productId: string;
   name: string;
   sku: string;
-  productImg: string;
+  productImage: string;
   price: number;
   stockQuantity: number;
   collectionId: number;
@@ -18,7 +18,7 @@ export interface Product {
 export interface NewProduct {
   name: string;
   sku: string;
-  productImg: string;
+  productImage: string;
   price: number;
   stockQuantity: number;
   collectionId: number;
@@ -81,6 +81,7 @@ export const api = createApi({
     "Sales",
     "SalesReceipt",
     "Collections",
+    "Upload",
   ], // Used to track and invalidate cache for specific resources
   endpoints: (build) => ({
     // build.query = GET request
@@ -208,6 +209,21 @@ export const api = createApi({
       query: () => "/users",
       providesTags: ["Users"], // tagTypes
     }),
+
+    // UPLOAD IMAGE
+    uploadImage: build.mutation<{ url: string }, File>({
+      query: (file) => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        return {
+          url: "/upload",
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Upload"],
+    }),
   }),
 });
 
@@ -240,4 +256,5 @@ export const {
   useEditCollectionMutation,
   useDeleteCollectionMutation,
   useGetUsersQuery,
+  useUploadImageMutation,
 } = api;

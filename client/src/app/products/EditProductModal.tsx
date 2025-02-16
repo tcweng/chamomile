@@ -7,7 +7,7 @@ import { Divider } from "@mui/material";
 type ProductFormData = {
   name: string;
   sku: string;
-  productImg: string;
+  productImage: string;
   price: number;
   stockQuantity: number;
   collectionId: number;
@@ -34,7 +34,7 @@ const EditProductModal = ({
   const [formData, setFormData] = useState({
     name: product?.name || "",
     sku: product?.sku || "",
-    productImg: product?.productImg || "",
+    productImage: product?.productImage || "",
     price: product?.price || 0,
     stockQuantity: product?.stockQuantity || 0,
     collectionId: product?.collectionId || 0,
@@ -42,12 +42,11 @@ const EditProductModal = ({
 
   // Update formData when the modal receives a new product
   useEffect(() => {
-    console.log(product);
     if (product) {
       setFormData({
         name: product.name,
         sku: product.sku,
-        productImg: product.productImg,
+        productImage: product.productImage,
         price: product.price,
         stockQuantity: product.stockQuantity,
         collectionId: product.collectionId,

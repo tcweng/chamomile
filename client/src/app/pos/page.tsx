@@ -18,9 +18,11 @@ import {
   Wallet,
 } from "lucide-react";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import Image from "next/image";
 
 type CartItem = {
   productId: string;
+  productImage: string;
   name: string;
   price: number;
   quantity: number;
@@ -73,6 +75,7 @@ const POS = () => {
   // ADD ITEM TO CART
   const handleAddToCart = (product: {
     productId: string;
+    productImage: string;
     name: string;
     price: number;
     stockQuantity: number;
@@ -308,7 +311,19 @@ const POS = () => {
                   onClick={() => handleAddToCart(product)}
                 >
                   <div className="flex flex-col items-start">
-                    <div className="w-full h-36 bg-blue-200 rounded-md mb-2"></div>
+                    {product.productImage != null ? (
+                      <Image
+                        src={product.productImage}
+                        alt={`${product.name}'s Image`}
+                        width={0}
+                        height={0}
+                        style={{ width: "100%", objectFit: "cover" }}
+                        className="w-full h-36 rounded-md mb-2"
+                      ></Image>
+                    ) : (
+                      <div className="w-full h-36 bg-slate-200 rounded-md mb-2"></div>
+                    )}
+
                     <h3 className="text-lg text-gray-900 font-semibold">
                       {product.name}
                     </h3>
@@ -350,7 +365,19 @@ const POS = () => {
                   <div key={item.productId} className="border-t pb-4 pt-4">
                     <div className="flex flex-row gap-6 items-center">
                       {/* IMAGE */}
-                      <div className="h-20 aspect-square bg-slate-200 rounded"></div>
+                      {item.productImage != null ? (
+                        <Image
+                          src={item.productImage}
+                          alt={`${item.name}'s Image`}
+                          width={70}
+                          height={70}
+                          style={{ objectFit: "cover" }}
+                          className="h-20 aspect-square rounded"
+                        ></Image>
+                      ) : (
+                        <div className="h-20 aspect-square bg-slate-200 rounded"></div>
+                      )}
+
                       {/* NAME & PRICE */}
                       <div className="w-full flex gap-1 flex-col">
                         <p className="text-lg font-medium">{item.name}</p>

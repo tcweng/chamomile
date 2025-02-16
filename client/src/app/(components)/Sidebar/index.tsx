@@ -14,7 +14,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-import ProfilePicture from "@/materials/chamomilezhi.jpg";
+// import ProfilePicture from "@/materials/chamomilezhi.jpg";
 import Image from "next/image";
 
 interface SidebarLinkProps {
@@ -80,9 +80,11 @@ const SideBar = () => {
       >
         <div>
           <Image
-            src={ProfilePicture.src}
+            src="https://s3-chamomile.s3.ap-southeast-1.amazonaws.com/chamomilezhi.jpg"
             alt="Profile Picture of Chamomile"
             className="rounded-lg w-16"
+            width="64"
+            height="64"
           ></Image>
         </div>
         {/* <h1 className={`${isSidebarCollapsed ? "hidden" : "block" }font-extrabold text-2xl`}>Chamomile</h1> */}

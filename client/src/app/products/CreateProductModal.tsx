@@ -1,12 +1,12 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import Header from "../(components)/Header";
-import { useGetCollectionQuery } from "@/state/api";
+import { useGetCollectionQuery, useUploadImageMutation } from "@/state/api";
 import { Divider } from "@mui/material";
 
 type ProductFormData = {
   name: string;
   sku: string;
-  productImg: string;
+  productImage: string;
   price: number;
   stockQuantity: number;
   collectionId: number;
@@ -28,13 +28,31 @@ const CreateProductModal = ({
   const [formData, setFormData] = useState({
     name: "",
     sku: "",
-    productImg: "",
+    productImage: "",
     price: 0,
     stockQuantity: 0,
     collectionId: 0,
   });
 
   const { data: collections, isLoading } = useGetCollectionQuery();
+  const [uploadImage] = useUploadImageMutation();
+
+  // const uploadImageToS3 = async (file: File) => {
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   const response = await fetch("/upload", {
+  //     method: "POST",
+  //     body: formData,
+  //   });
+
+  //   const data = await response.json();
+  //   console.log("Upload Response:", data); // Debug the response
+
+  //   if (!response.ok) throw new Error("Upload failed");
+
+  //   return data.url; // Make sure your backend returns the image URL
+  // };
 
   // The 'name' here correspond to the name attribute in the form element.
   // So it's setting the formData state with its name's value.
@@ -53,8 +71,27 @@ const CreateProductModal = ({
     });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await uploadImage(file).unwrap(); // Upload the file
+      console.log("Uploaded image URL:", response.url);
+
+      // Update formData with the new image URL
+      setFormData((prev) => ({
+        ...prev,
+        productImage: response.url, // Store the uploaded image URL
+      }));
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Submitted:", formData.productImage);
     onCreate(formData);
     onClose();
   };
@@ -71,6 +108,17 @@ const CreateProductModal = ({
         <Header name="Create New Product"></Header>
         <Divider className="py-2"></Divider>
         <form onSubmit={handleSubmit} className="mt-5">
+          {/* PRODUCT IMAGE */}
+          <label htmlFor="productImage" className={labelCssStyles}>
+            Product Image
+          </label>
+          <input
+            type="file"
+            name="productImage"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className={inputCssStyles}
+          />
           {/* PRODUCT NAME */}
           <label htmlFor="productName" className={labelCssStyles}>
             Product Name
