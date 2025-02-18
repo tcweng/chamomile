@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useDeleteReceiptMutation,
   useGetProductsQuery,
   useGetSingleSalesReceiptsQuery,
 } from "@/state/api";
@@ -17,6 +18,18 @@ const ReceiptDetails = () => {
   } = useGetSingleSalesReceiptsQuery(Number(receiptId));
   const { data: products } = useGetProductsQuery();
   const router = useRouter();
+  const [deleteReceipt] = useDeleteReceiptMutation();
+
+  const handleDeleteReceipt = async (receiptId: number) => {
+    try {
+      await deleteReceipt(receiptId);
+      alert("Receipt & Sales Deleted");
+      router.back();
+      console.log("Receipt deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete receipt:", error);
+    }
+  };
 
   if (isLoading) {
     return <div className="py-4">Loading...</div>;
@@ -34,7 +47,7 @@ const ReceiptDetails = () => {
     <div>
       <button
         className="flex flex-row gap-2 items-center justify-center my-4"
-        onClick={() => router.push(`/sales`)}
+        onClick={() => router.back()}
       >
         <ArrowLeft className="w-4 h-4" /> Back
       </button>
@@ -57,7 +70,7 @@ const ReceiptDetails = () => {
         receipt?.sales?.map((item) => (
           <div
             key={item.saleId}
-            className="grid grid-cols-5 gap-2 py-2 w-3/4 p-4 border-b border-x"
+            className="grid grid-cols-5 gap-2 py-2 w-full lg:w-3/4 p-4 border-b border-x"
           >
             <p>{item.quantity}x</p>
             <p>
@@ -70,6 +83,12 @@ const ReceiptDetails = () => {
         ))
       )}
       <p className="text-lg font-medium mt-4">RM {receipt?.total.toFixed(2)}</p>
+      <button
+        className="mt-2 bg-red-400 px-4 py-2 rounded text-white"
+        onClick={() => handleDeleteReceipt(Number(receiptId))}
+      >
+        Delete
+      </button>
     </div>
   );
 };

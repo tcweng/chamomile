@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createSalesReceipt,
+  deleteReceipt,
   getAllReceipt,
   getReceipt,
   getSales,
@@ -13,5 +14,7 @@ router.get("/", getSales);
 router.post("/checkout", createSalesReceipt);
 router.get("/receipt", getAllReceipt); // http://localhost:8000/sales/receipt
 router.get("/receipt/:receiptId", getReceipt);
+router.delete("/receipt/:receiptId", deleteReceipt);
+// router.delete("/:receiptId");
 
 export default router;

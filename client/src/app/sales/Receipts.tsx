@@ -1,12 +1,25 @@
-import { useGetSalesReceiptsQuery } from "@/state/api";
+import {
+  useDeleteReceiptMutation,
+  useGetSalesReceiptsQuery,
+} from "@/state/api";
 import React from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const Receipts = () => {
   const { data: receipts, isError, isLoading } = useGetSalesReceiptsQuery();
   const router = useRouter();
+  const [deleteReceipt] = useDeleteReceiptMutation();
+
+  const handleDeleteReceipt = async (receiptId: number) => {
+    try {
+      await deleteReceipt(receiptId);
+      console.log("Receipt deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete receipt:", error);
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -47,6 +60,16 @@ const Receipts = () => {
       width: 200,
       type: "string",
       valueGetter: (value, row) => row.remark,
+    },
+    {
+      field: "actions",
+      headerName: "Delete",
+      width: 100,
+      renderCell: (params) => (
+        <button onClick={() => handleDeleteReceipt(params.row.receiptId)}>
+          <Trash2 className="w-5 h-5"></Trash2>
+        </button>
+      ),
     },
   ];
 

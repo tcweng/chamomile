@@ -311,7 +311,11 @@ const POS = () => {
                   onClick={() => handleAddToCart(product)}
                 >
                   <div className="flex flex-col items-start">
-                    {product.productImage != null ? (
+                    {product.productImage == null ||
+                    product.productImage == "" ||
+                    product.productImage == undefined ? (
+                      <div className="w-full h-36 bg-slate-200 rounded-md mb-2"></div>
+                    ) : (
                       <Image
                         src={product.productImage}
                         alt={`${product.name}'s Image`}
@@ -320,8 +324,6 @@ const POS = () => {
                         style={{ width: "100%", objectFit: "cover" }}
                         className="w-full h-36 rounded-md mb-2"
                       ></Image>
-                    ) : (
-                      <div className="w-full h-36 bg-slate-200 rounded-md mb-2"></div>
                     )}
 
                     <h3 className="text-lg text-gray-900 font-semibold">

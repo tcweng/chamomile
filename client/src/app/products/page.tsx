@@ -93,7 +93,11 @@ const Products = () => {
       width: 128,
       type: "string",
       renderCell: (params) =>
-        params.row.productImage != null ? (
+        params.row.productImage == "" ||
+        params.row.productImage == null ||
+        params.row.productImage == undefined ? (
+          <div className="w-12 h-12 bg-slate-200 rounded"></div>
+        ) : (
           <Image
             src={params.row.productImage}
             alt={`${params.row.productName}'s Image`}
@@ -101,8 +105,6 @@ const Products = () => {
             height={42}
             className="rounded"
           ></Image>
-        ) : (
-          <div className="w-12 h-12 bg-slate-200 rounded"></div>
         ),
     },
     {

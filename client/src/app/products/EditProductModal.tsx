@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import Header from "../(components)/Header";
-import { useGetCollectionQuery } from "@/state/api";
+import { useGetCollectionQuery, useUploadImageMutation } from "@/state/api";
 import { Save } from "lucide-react";
 import { Divider } from "@mui/material";
+import Image from "next/image";
 
 type ProductFormData = {
   name: string;
@@ -30,7 +31,6 @@ const EditProductModal = ({
   onEdit,
 }: EditProductModalProps) => {
   const { data: collections, isLoading } = useGetCollectionQuery();
-
   const [formData, setFormData] = useState({
     name: product?.name || "",
     sku: product?.sku || "",
@@ -54,6 +54,8 @@ const EditProductModal = ({
     }
   }, [product]);
 
+  const [uploadImage] = useUploadImageMutation();
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -65,6 +67,24 @@ const EditProductModal = ({
           ? parseFloat(value)
           : value,
     });
+  };
+
+  const handleImageUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await uploadImage(file).unwrap(); // Upload the file
+      console.log("Uploaded image URL:", response.url);
+
+      // Update formData with the new image URL
+      setFormData((prev) => ({
+        ...prev,
+        productImage: response.url, // Store the uploaded image URL
+      }));
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -87,6 +107,32 @@ const EditProductModal = ({
         <Header name="Edit Product"></Header>
         <Divider className="py-2"></Divider>
         <form onSubmit={handleSubmit} className="mt-5">
+          {/* PRODUCT IMAGE */}
+          <label htmlFor="productImage" className={labelCssStyles}>
+            Product Image
+          </label>
+          <div className="flex flex-row gap-2 justify-center items-center">
+            {formData.productImage == null ||
+            formData.productImage == "" ||
+            formData.productImage == undefined ? (
+              <div></div>
+            ) : (
+              <Image
+                src={formData.productImage}
+                alt={`${formData.name}'s Image`}
+                width={64}
+                height={64}
+                className="rounded mb-2"
+              ></Image>
+            )}
+            <input
+              type="file"
+              name="productImage"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className={inputCssStyles}
+            />
+          </div>
           {/* PRODUCT NAME */}
           <label htmlFor="productName" className={labelCssStyles}>
             Product Name
@@ -100,7 +146,6 @@ const EditProductModal = ({
             required
             onChange={handleChange}
           ></input>
-
           {/* SKU */}
           <label htmlFor="productName" className={labelCssStyles}>
             SKU
@@ -114,7 +159,6 @@ const EditProductModal = ({
             required
             onChange={handleChange}
           ></input>
-
           {/* COLLECTION */}
           <label htmlFor="collection" className={labelCssStyles}>
             Collection
@@ -140,7 +184,6 @@ const EditProductModal = ({
             )}
             ;
           </select>
-
           {/* PRODUCT PRICE */}
           <label htmlFor="productPrice" className={labelCssStyles}>
             Price
@@ -154,7 +197,6 @@ const EditProductModal = ({
             required
             onChange={handleChange}
           ></input>
-
           {/* STOCK QUANTITY */}
           <label htmlFor="stockQuantity" className={labelCssStyles}>
             Stock Quantity
@@ -168,7 +210,6 @@ const EditProductModal = ({
             required
             onChange={handleChange}
           ></input>
-
           {/* CREATE ACTIONS */}
           <button
             type="submit"

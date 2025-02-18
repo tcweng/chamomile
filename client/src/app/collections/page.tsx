@@ -94,7 +94,6 @@ const Collections = () => {
       renderCell: (params) => (
         <button
           onClick={() => {
-            console.log(params);
             setSelectedCollection(params.row);
             setSelectedCollectionId(params.row.collectionId);
             setIsEditModalOpen(true);

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSalesReceipt = exports.getReceipt = exports.getAllReceipt = exports.getSales = void 0;
+exports.deleteReceipt = exports.createSalesReceipt = exports.getReceipt = exports.getAllReceipt = exports.getSales = void 0;
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 const getSales = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -93,3 +93,35 @@ const createSalesReceipt = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.createSalesReceipt = createSalesReceipt;
+const deleteReceipt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { receiptId } = req.params;
+    try {
+        // Fetch all sales related to the receipt
+        const sales = yield prisma.sales.findMany({
+            where: { receiptId: Number(receiptId) },
+        });
+        // Restore stock quantities
+        const stockUpdates = sales.map((sale) => prisma.products.update({
+            where: { productId: sale.productId },
+            data: { stockQuantity: { increment: sale.quantity } },
+        }));
+        // Execute stock updates before deleting transactions
+        yield Promise.all(stockUpdates);
+        // Delete all sales associated with the receipt
+        yield prisma.sales.deleteMany({
+            where: { receiptId: Number(receiptId) },
+        });
+        // Delete the receipt
+        yield prisma.salesReceipt.delete({
+            where: { receiptId: Number(receiptId) },
+        });
+        res
+            .status(200)
+            .json({ message: "Receipt and transactions deleted successfully." });
+    }
+    catch (error) {
+        console.error("Error deleting receipt:", error);
+        res.status(500).json({ message: "Failed to delete receipt." });
+    }
+});
+exports.deleteReceipt = deleteReceipt;

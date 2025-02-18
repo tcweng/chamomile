@@ -8,4 +8,6 @@ router.get("/", salesController_1.getSales);
 router.post("/checkout", salesController_1.createSalesReceipt);
 router.get("/receipt", salesController_1.getAllReceipt); // http://localhost:8000/sales/receipt
 router.get("/receipt/:receiptId", salesController_1.getReceipt);
+router.delete("/receipt/:receiptId", salesController_1.deleteReceipt);
+// router.delete("/:receiptId");
 exports.default = router;

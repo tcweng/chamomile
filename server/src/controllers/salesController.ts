@@ -91,3 +91,45 @@ export const createSalesReceipt = async (
     res.status(500).json({ message: "Checkout failed" });
   }
 };
+
+export const deleteReceipt = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { receiptId } = req.params;
+
+  try {
+    // Fetch all sales related to the receipt
+    const sales = await prisma.sales.findMany({
+      where: { receiptId: Number(receiptId) },
+    });
+
+    // Restore stock quantities
+    const stockUpdates = sales.map((sale) =>
+      prisma.products.update({
+        where: { productId: sale.productId },
+        data: { stockQuantity: { increment: sale.quantity } },
+      })
+    );
+
+    // Execute stock updates before deleting transactions
+    await Promise.all(stockUpdates);
+
+    // Delete all sales associated with the receipt
+    await prisma.sales.deleteMany({
+      where: { receiptId: Number(receiptId) },
+    });
+
+    // Delete the receipt
+    await prisma.salesReceipt.delete({
+      where: { receiptId: Number(receiptId) },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Receipt and transactions deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting receipt:", error);
+    res.status(500).json({ message: "Failed to delete receipt." });
+  }
+};

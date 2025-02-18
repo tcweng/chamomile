@@ -203,6 +203,14 @@ export const api = createApi({
       invalidatesTags: ["Sales", "Products"],
     }),
 
+    deleteReceipt: build.mutation<void, number>({
+      query: (receiptId) => ({
+        url: `/sales/receipt/${receiptId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Sales", "SalesReceipt", "Products"],
+    }),
+
     // USERS
     getUsers: build.query<User[], void>({
       // User[] come from interface above
@@ -251,6 +259,7 @@ export const {
   useGetSalesReceiptsQuery,
   useGetSingleSalesReceiptsQuery,
   useCreateSalesReceiptMutation,
+  useDeleteReceiptMutation,
   useGetCollectionQuery,
   useCreateCollectionMutation,
   useEditCollectionMutation,

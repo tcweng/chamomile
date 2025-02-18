@@ -2,6 +2,7 @@ import React, { ChangeEvent, FormEvent, useState } from "react";
 import Header from "../(components)/Header";
 import { useGetCollectionQuery, useUploadImageMutation } from "@/state/api";
 import { Divider } from "@mui/material";
+import Image from "next/image";
 
 type ProductFormData = {
   name: string;
@@ -36,23 +37,6 @@ const CreateProductModal = ({
 
   const { data: collections, isLoading } = useGetCollectionQuery();
   const [uploadImage] = useUploadImageMutation();
-
-  // const uploadImageToS3 = async (file: File) => {
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-
-  //   const response = await fetch("/upload", {
-  //     method: "POST",
-  //     body: formData,
-  //   });
-
-  //   const data = await response.json();
-  //   console.log("Upload Response:", data); // Debug the response
-
-  //   if (!response.ok) throw new Error("Upload failed");
-
-  //   return data.url; // Make sure your backend returns the image URL
-  // };
 
   // The 'name' here correspond to the name attribute in the form element.
   // So it's setting the formData state with its name's value.
@@ -112,13 +96,28 @@ const CreateProductModal = ({
           <label htmlFor="productImage" className={labelCssStyles}>
             Product Image
           </label>
-          <input
-            type="file"
-            name="productImage"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className={inputCssStyles}
-          />
+          <div className="flex flex-row gap-2 justify-center items-center">
+            {formData.productImage == null ||
+            formData.productImage == "" ||
+            formData.productImage == undefined ? (
+              <div></div>
+            ) : (
+              <Image
+                src={formData.productImage}
+                alt={`${formData.name}'s Image`}
+                width={64}
+                height={64}
+                className="rounded mb-2"
+              ></Image>
+            )}
+            <input
+              type="file"
+              name="productImage"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className={inputCssStyles}
+            />
+          </div>
           {/* PRODUCT NAME */}
           <label htmlFor="productName" className={labelCssStyles}>
             Product Name
@@ -131,7 +130,6 @@ const CreateProductModal = ({
             className={inputCssStyles}
             required
           ></input>
-
           {/* SKU */}
           <label htmlFor="productName" className={labelCssStyles}>
             SKU
@@ -144,7 +142,6 @@ const CreateProductModal = ({
             className={inputCssStyles}
             required
           ></input>
-
           {/* COLLECTION */}
           <label htmlFor="collection" className={labelCssStyles}>
             Collection
@@ -170,7 +167,6 @@ const CreateProductModal = ({
             )}
             ;
           </select>
-
           {/* PRODUCT PRICE */}
           <label htmlFor="productPrice" className={labelCssStyles}>
             Price
@@ -183,7 +179,6 @@ const CreateProductModal = ({
             className={inputCssStyles}
             required
           ></input>
-
           {/* STOCK QUANTITY */}
           <label htmlFor="stockQuantity" className={labelCssStyles}>
             Stock Quantity
@@ -196,7 +191,6 @@ const CreateProductModal = ({
             className={inputCssStyles}
             required
           ></input>
-
           {/* CREATE ACTIONS */}
           <button
             type="submit"
