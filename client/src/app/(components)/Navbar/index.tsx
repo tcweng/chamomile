@@ -2,7 +2,7 @@
 
 import { useAppDispatch, useAppSelector } from "@/app/redux";
 import { /*setIsDarkMode,*/ setIsSidebarCollapsed } from "@/state";
-import { Bell, Menu, Settings } from "lucide-react";
+import { Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 // import ProfilePicture from "@/materials/chamomilezhi.jpg";
@@ -34,7 +34,7 @@ const Navbar = () => {
           <Menu className="w-4 h-4"></Menu>
         </button>
 
-        <div className="relative">
+        {/* <div className="relative">
           <input
             type="search"
             placeholder="Search"
@@ -44,7 +44,7 @@ const Navbar = () => {
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <Bell className="text-gray-500" size={20} />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Right Side */}

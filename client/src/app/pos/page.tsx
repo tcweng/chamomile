@@ -271,10 +271,10 @@ const POS = () => {
   return (
     <div className="mx-auto w-full">
       {/* BODY PRODUCT LIST */}
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] xl:grid-cols-[3fr_1.5fr] gap-4">
-        <div>
+      <div className="grid grid-cols-1 lg:grid-cols-[60vw_2fr] xl:grid-cols-[65vw_2fr] gap-4">
+        <div className="w-full">
           {/* TAB */}
-          <div className="flex gap-2 mb-2 bg-white p-2 rounded-md border border-gray-200">
+          <div className="flex gap-2 mb-2 bg-white p-2 rounded-md border border-gray-200 overflow-scroll">
             {isLoading ? (
               <div>Loading...</div>
             ) : (
@@ -285,7 +285,7 @@ const POS = () => {
                     handleCollectionChange(collection.collectionId)
                   }
                   // Default Style
-                  className={`px-4 py-2 rounded-lg transition-all ${
+                  className={`px-4 py-2 rounded-lg min-w-fit transition-all ${
                     // Active Style
                     searchCollection == collection.collectionId
                       ? `${tabStyle}`
@@ -300,7 +300,7 @@ const POS = () => {
             )}
           </div>
           {/* Product List */}
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 h-screen">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 h-screen overflow-scroll">
             {isLoading ? (
               <div>Loading...</div>
             ) : (
@@ -314,13 +314,13 @@ const POS = () => {
                     {product.productImage == null ||
                     product.productImage == "" ||
                     product.productImage == undefined ? (
-                      <div className="w-full h-36 bg-slate-200 rounded-md mb-2"></div>
+                      <div className="w-full h-36 rounded-md mb-2  bg-slate-200"></div>
                     ) : (
                       <Image
                         src={product.productImage}
                         alt={`${product.name}'s Image`}
-                        width={0}
-                        height={0}
+                        width={512}
+                        height={512}
                         style={{ width: "100%", objectFit: "cover" }}
                         className="w-full h-36 rounded-md mb-2"
                       ></Image>
@@ -339,7 +339,7 @@ const POS = () => {
           </div>
         </div>
         {/* Cart */}
-        <div className="flex flex-col p-2 justify-between bg-white shadow rounded-2xl lg:h-screen lg:sticky lg:top-4">
+        <div className="flex flex-col border-8 border-white justify-between bg-white shadow rounded-2xl h-screen lg:sticky lg:top-4 overflow-scroll">
           {/* TOP */}
           <div className="flex flex-col gap-4 p-4 pb-2">
             <div className="flex flex-row justify-between items-center">
@@ -364,20 +364,22 @@ const POS = () => {
                 <p className="border-t pt-4">Cart is Empty</p>
               ) : (
                 cart.map((item) => (
-                  <div key={item.productId} className="border-t pb-4 pt-4">
+                  <div key={item.productId} className="border-t py-4">
                     <div className="flex flex-row gap-6 items-center">
                       {/* IMAGE */}
-                      {item.productImage != null ? (
+                      {item.productImage == null ||
+                      item.productImage == "" ||
+                      item.productImage == undefined ? (
+                        <div className="h-20 aspect-square bg-slate-200 rounded"></div>
+                      ) : (
                         <Image
                           src={item.productImage}
                           alt={`${item.name}'s Image`}
-                          width={70}
-                          height={70}
+                          width={256}
+                          height={256}
                           style={{ objectFit: "cover" }}
-                          className="h-20 aspect-square rounded"
+                          className="w-20 aspect-square rounded object-cover"
                         ></Image>
-                      ) : (
-                        <div className="h-20 aspect-square bg-slate-200 rounded"></div>
                       )}
 
                       {/* NAME & PRICE */}
@@ -463,7 +465,7 @@ const POS = () => {
             </div>
           </div>
           {/* BOTTOM */}
-          <div className="flex flex-col p-4 bg-gray-50 rounded-2xl">
+          <div className="flex flex-col p-4 bg-gray-50 rounded-2xl sticky bottom-0">
             <p className="text-4xl font-medium text-end mb-2">
               RM {cartTotal.toFixed(2)}
             </p>
