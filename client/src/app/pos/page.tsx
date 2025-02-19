@@ -47,7 +47,7 @@ const POS = () => {
   const { data: collections } = useGetCollectionQuery();
 
   const handleCollectionChange = (newValue: number) => {
-    if (newValue == 0) {
+    if (newValue == 0 || newValue == 1) {
       setSearchCollection(undefined);
     } else {
       setSearchCollection(newValue);
@@ -300,7 +300,7 @@ const POS = () => {
             )}
           </div>
           {/* Product List */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 h-screen overflow-scroll">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 h-fit max-h-screen overflow-scroll">
             {isLoading ? (
               <div>Loading...</div>
             ) : (
