@@ -4,8 +4,10 @@ import React, { useEffect } from "react";
 import Navbar from "@/app/(components)/Navbar";
 import SideBar from "@/app/(components)/Sidebar";
 import StoreProvider, { useAppSelector } from "./redux";
+import { usePathname } from "next/navigation";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
   const isSidebarCollapsed = useAppSelector(
     (state) => state.global.isSidebarCollapsed
   );
@@ -31,7 +33,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           isSidebarCollapsed ? "md:pl-24" : "md:pl-72"
         }`}
       >
-        <Navbar />
+        {pathname !== "/pos" && <Navbar />}
         {children}
       </main>
     </div>

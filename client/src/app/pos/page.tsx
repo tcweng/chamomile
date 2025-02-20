@@ -6,7 +6,7 @@ import {
   useGetProductsQuery,
   useGetCollectionQuery,
 } from "@/state/api";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Banknote,
   CreditCard,
@@ -14,6 +14,7 @@ import {
   Minus,
   Pencil,
   Plus,
+  Ticket,
   Trash2,
   Wallet,
 } from "lucide-react";
@@ -36,8 +37,10 @@ const POS = () => {
   const [createSalesReceipt] = useCreateSalesReceiptMutation();
   const [cartTotal, setCartTotal] = useState(0);
   const [payment, setPayment] = useState<string>("Cash");
+  const [receiptRemark, setReceiptRemark] = useState<string>("");
   const [editItem, setEditItem] = useState<string | null>();
   const [discount, setDiscount] = useState<number | null>();
+  const [cartDiscount, setCartDiscount] = useState<number | null>();
   const [searchCollection, setSearchCollection] = useState<number>();
   const {
     data: products,
@@ -46,6 +49,7 @@ const POS = () => {
   } = useGetProductsQuery({ collectionQuery: searchCollection });
   const { data: collections } = useGetCollectionQuery();
 
+  // HANDLE COLLECTION CHANGE
   const handleCollectionChange = (newValue: number) => {
     if (newValue == 0 || newValue == 1) {
       setSearchCollection(undefined);
@@ -60,6 +64,14 @@ const POS = () => {
     newPayment: string
   ) => {
     setPayment(newPayment);
+  };
+
+  // SET REMARK FOR RECEIPT
+  const handleReceiptRemarkChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setReceiptRemark(e.target.value);
   };
 
   // Recalculate Total Amount
@@ -195,6 +207,12 @@ const POS = () => {
     });
   };
 
+  // SET DISCOUNT BY SPECIFIC AMOUNT
+  const applyDiscountToCart = (value: number | null | undefined) => {
+    value === null || value === undefined ? (value = 0) : value;
+    setCartTotal(cartTotal - value);
+  };
+
   // SET REMARK FOR CART ITEM
   const setRemark = (item: CartItem, value: string) => {
     setCart((prevCart) =>
@@ -233,8 +251,13 @@ const POS = () => {
         totalAmount: item.price * item.quantity,
         remark: item.remark,
       })),
-      total: totalAmount,
-      remark: payment,
+      total: cartTotal,
+      remark:
+        payment +
+        " | " +
+        receiptRemark +
+        " | " +
+        `Cart Discount: RM ${cartDiscount}`,
     };
 
     try {
@@ -272,9 +295,9 @@ const POS = () => {
     <div className="mx-auto w-full">
       {/* BODY PRODUCT LIST */}
       <div className="grid grid-cols-1 lg:grid-cols-[60vw_2fr] xl:grid-cols-[65vw_2fr] gap-4">
-        <div className="w-full">
+        <div className="w-full h-90vh overflow-scroll">
           {/* TAB */}
-          <div className="flex gap-2 mb-2 bg-white p-2 rounded-md border border-gray-200 overflow-scroll">
+          <div className="flex gap-2 mb-2 bg-white p-2 rounded-md border border-gray-200 overflow-scroll sticky top-0">
             {isLoading ? (
               <div>Loading...</div>
             ) : (
@@ -300,7 +323,7 @@ const POS = () => {
             )}
           </div>
           {/* Product List */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 h-fit max-h-screen overflow-scroll">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2">
             {isLoading ? (
               <div>Loading...</div>
             ) : (
@@ -339,7 +362,7 @@ const POS = () => {
           </div>
         </div>
         {/* Cart */}
-        <div className="flex flex-col border-8 border-white justify-between bg-white shadow rounded-2xl h-screen lg:sticky lg:top-4 overflow-scroll">
+        <div className="flex flex-col border-8 border-white justify-between bg-white shadow rounded-2xl h-90vh lg:sticky lg:top-4 overflow-scroll">
           {/* TOP */}
           <div className="flex flex-col gap-4 p-4 pb-2">
             <div className="flex flex-row justify-between items-center">
@@ -466,9 +489,40 @@ const POS = () => {
           </div>
           {/* BOTTOM */}
           <div className="flex flex-col p-4 bg-gray-50 rounded-2xl sticky bottom-0">
-            <p className="text-4xl font-medium text-end mb-2">
-              RM {cartTotal.toFixed(2)}
-            </p>
+            <div className="flex flex-row justify-between items-center mb-2"></div>
+            <input
+              type="textarea"
+              name="receiptRemark"
+              placeholder="Additional Notes"
+              className="block w-full p-2 border rounded-md mb-2"
+              onChange={handleReceiptRemarkChange}
+            ></input>
+            <div className="flex flex-row justify-between">
+              <div className="flex gap-1">
+                <input
+                  type="number"
+                  name="cartDiscount"
+                  placeholder="Discount"
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    setCartDiscount(isNaN(value) ? null : value);
+                  }}
+                  className="w-32 p-2 border rounded-md"
+                ></input>
+                <button
+                  type="button"
+                  value="0"
+                  className="w-fit p-2 bg-blue-500 text-white rounded hover:bg-blue-600 hover:text-white transition-all"
+                  onClick={() => applyDiscountToCart(cartDiscount)}
+                >
+                  <Ticket className="w-6 h-6" />
+                </button>
+              </div>
+              <p className="text-2xl font-medium text-end mb-2">
+                RM {cartTotal.toFixed(2)}
+              </p>
+            </div>
+
             <ToggleButtonGroup
               value={payment}
               exclusive
@@ -483,7 +537,6 @@ const POS = () => {
                 className="flex- flex-col w-full gap-1"
               >
                 <Banknote />
-                Cash
               </ToggleButton>
               <ToggleButton
                 value="E-Wallet"
@@ -491,7 +544,6 @@ const POS = () => {
                 className="flex- flex-col w-full gap-1"
               >
                 <Wallet />
-                E-Wallet
               </ToggleButton>
               <ToggleButton
                 value="Bank"
@@ -499,12 +551,11 @@ const POS = () => {
                 className="flex- flex-col w-full gap-1"
               >
                 <CreditCard />
-                Bank
               </ToggleButton>
             </ToggleButtonGroup>
             <button
               type="button"
-              className="mt-4 px-4 py-4 text-white bg-blue-600 rounded text-lg font-medium hover:bg-blue-700 transition-all"
+              className="mt-4 py-2 text-white bg-blue-600 rounded text-lg font-medium hover:bg-blue-700 transition-all"
               onClick={handleCheckout}
             >
               Complete Order

@@ -82,9 +82,10 @@ const SideBar = () => {
           <Image
             src="https://s3-chamomile.s3.ap-southeast-1.amazonaws.com/chamomilezhi.jpg"
             alt="Profile Picture of Chamomile"
-            className="rounded-lg w-16"
+            className="rounded-lg w-16 cursor-pointer"
             width="64"
             height="64"
+            onClick={toggleSidebar}
           ></Image>
         </div>
         {/* <h1 className={`${isSidebarCollapsed ? "hidden" : "block" }font-extrabold text-2xl`}>Chamomile</h1> */}
