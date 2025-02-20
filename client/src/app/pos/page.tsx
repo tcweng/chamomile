@@ -70,7 +70,6 @@ const POS = () => {
   const handleReceiptRemarkChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
     setReceiptRemark(e.target.value);
   };
 
@@ -211,6 +210,7 @@ const POS = () => {
   const applyDiscountToCart = (value: number | null | undefined) => {
     value === null || value === undefined ? (value = 0) : value;
     setCartTotal(cartTotal - value);
+    setCartDiscount(null);
   };
 
   // SET REMARK FOR CART ITEM
@@ -236,10 +236,10 @@ const POS = () => {
     // const sum = total.reduce((previousValue, currentValue, index) => previousValue + currentValue, 0);
     // cart.reduce() access the cart's array values.
     // total = previous value; item = current value; accumulator value is 0.
-    const totalAmount = cart.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    // const totalAmount = cart.reduce(
+    //   (total, item) => total + item.price * item.quantity,
+    //   0
+    // );
 
     const checkoutData: SaleReceipt = {
       cart: cart.map((item) => ({
@@ -263,6 +263,8 @@ const POS = () => {
     try {
       await createSalesReceipt(checkoutData);
       handleClearCart();
+      setCartDiscount(null);
+      setReceiptRemark("");
       alert("Order successfully created.");
     } catch (error) {
       console.log("Checkout failed:", error);
@@ -493,6 +495,7 @@ const POS = () => {
             <input
               type="textarea"
               name="receiptRemark"
+              value={receiptRemark}
               placeholder="Additional Notes"
               className="block w-full p-2 border rounded-md mb-2"
               onChange={handleReceiptRemarkChange}
@@ -502,6 +505,7 @@ const POS = () => {
                 <input
                   type="number"
                   name="cartDiscount"
+                  value={cartDiscount ?? ""}
                   placeholder="Discount"
                   onChange={(e) => {
                     const value = parseFloat(e.target.value);
