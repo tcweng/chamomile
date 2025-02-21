@@ -3,6 +3,9 @@
 import { Package, ScanLine } from "lucide-react";
 import Header from "../(components)/Header";
 import { useRouter } from "next/navigation";
+import { useGetSalesQuery } from "@/state/api";
+import { useState } from "react";
+import { Divider } from "@mui/material";
 
 // import {
 //   CheckCircle,
@@ -22,6 +25,20 @@ const QuickLinkCSS =
 
 const Dashboard = () => {
   const router = useRouter();
+  const { data: sales } = useGetSalesQuery();
+  const todayDate = new Date().toISOString().split("T")[0];
+
+  const totalOrder = sales?.length;
+  const totalSales = sales?.reduce(
+    (total, transaction) => total + transaction.totalAmount,
+    0
+  );
+  const todaySales = sales
+    ?.filter((transaction) => transaction.timestamp.split("T")[0] === todayDate)
+    .reduce((total, transaction) => total + transaction.totalAmount, 0);
+  const todayOrders = sales?.filter(
+    (transaction) => transaction.timestamp.split("T")[0] === todayDate
+  ).length;
 
   return (
     <div>
@@ -41,7 +58,24 @@ const Dashboard = () => {
         </button>
       </div>
 
-      <Header name="Analytics (Coming Soon)" />
+      <Header name="Analytics" />
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-1/2 gap-4 mt-4">
+        <div className="flex flex-col rounded-md border border-slate-200 bg-white p-6 gap-2">
+          <p className="text-lg">Today's Sales</p>
+          <Divider></Divider>
+          <p className="text-2xl font-medium">RM {todaySales?.toFixed(2)}</p>
+          <p className="text-sm text-gray-400">
+            Total Sales: RM {totalSales?.toFixed(2)}
+          </p>
+        </div>
+
+        <div className="flex flex-col rounded-md border border-slate-200 bg-white p-6 gap-2">
+          <p className="text-lg">Today's Orders</p>
+          <Divider></Divider>
+          <p className="text-2xl font-medium">{todayOrders}</p>
+          <p className="text-sm text-gray-400">Total Order: {totalOrder}</p>
+        </div>
+      </div>
 
       {/* <CardPopularProduct/> */}
       {/* <CardSalesSummary /> */}
