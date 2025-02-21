@@ -4,7 +4,6 @@ import { Package, ScanLine } from "lucide-react";
 import Header from "../(components)/Header";
 import { useRouter } from "next/navigation";
 import { useGetSalesQuery } from "@/state/api";
-import { useState } from "react";
 import { Divider } from "@mui/material";
 
 // import {
@@ -59,10 +58,10 @@ const Dashboard = () => {
       </div>
 
       <Header name="Analytics" />
-      <div className="grid grid-cols-1 lg:grid-cols-2 w-1/2 gap-4 mt-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 w-full lg:w-1/2 gap-4 mt-4">
         <div className="flex flex-col rounded-md border border-slate-200 bg-white p-6 gap-2">
-          <p className="text-lg">Today's Sales</p>
-          <Divider></Divider>
+          <p className="text-lg">Today&apos;s Sales</p>
+          <Divider />
           <p className="text-2xl font-medium">RM {todaySales?.toFixed(2)}</p>
           <p className="text-sm text-gray-400">
             Total Sales: RM {totalSales?.toFixed(2)}
@@ -70,8 +69,8 @@ const Dashboard = () => {
         </div>
 
         <div className="flex flex-col rounded-md border border-slate-200 bg-white p-6 gap-2">
-          <p className="text-lg">Today's Orders</p>
-          <Divider></Divider>
+          <p className="text-lg">Today&apos;s Orders</p>
+          <Divider />
           <p className="text-2xl font-medium">{todayOrders}</p>
           <p className="text-sm text-gray-400">Total Order: {totalOrder}</p>
         </div>
